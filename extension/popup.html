@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <div class="container">
+      <h2>Devlog Downloader</h2>
+      <p class="subtitle">Extracts devlogs from the current page.</p>
+      
+      <div class="field">
+        <label for="format-select">Format:</label>
+        <select id="format-select">
+          <option value="md">Markdown (.md)</option>
+          <option value="html">HTML (.html)</option>
+          <option value="txt">Plain Text (.txt)</option>
+        </select>
+      </div>
+      
+      <button id="download-btn">Download Devlogs</button>
+      <p id="status"></p>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
