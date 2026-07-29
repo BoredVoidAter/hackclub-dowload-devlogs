@@ -1,0 +1,9 @@
+{
+  "manifest_version": 3,
+  "name": "Devlog Downloader",
+  "version": "1.0.0",
+  "description": "Download devlogs from Stardance as ZIP with Markdown and media.",
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
