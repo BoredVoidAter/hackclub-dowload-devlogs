@@ -11,9 +11,7 @@
     "downloads"
   ],
   "host_permissions": [
-    "*://*.hackclub.com/*",
-    "*://*.amazonaws.com/*",
-    "*://cachet.dunkirk.sh/*"
+    "<all_urls>"
   ],
   "background": {
     "scripts": ["background.js"]

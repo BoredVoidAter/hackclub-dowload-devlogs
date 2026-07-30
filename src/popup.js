@@ -12,13 +12,10 @@ function htmlToMarkdown(html) {
   return md.replace(/<[^>]+>/g, '');
 }
 
-function fetchAssetViaBackground(url) {
-  return new Promise((resolve, reject) => {
-    chrome.runtime.sendMessage({ action: 'FETCH_ASSET', url }, (response) => {
-      if (response && response.base64) resolve(response.base64);
-      else reject(new Error(response?.error || 'Unknown fetch error'));
-    });
-  });
+async function fetchBlob(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+  return await res.blob();
 }
 
 document.getElementById('download-btn').addEventListener('click', async () => {
@@ -44,12 +41,15 @@ document.getElementById('download-btn').addEventListener('click', async () => {
       return;
     }
 
-    const devlogs = response.devlogs;
+    let devlogs = response.devlogs;
     if (devlogs.length === 0) {
       statusEl.textContent = 'No devlogs found on this page.';
       btnEl.disabled = false;
       return;
     }
+
+    // Sort devlogs chronologically (oldest first)
+    devlogs.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
     try {
       const zip = new JSZip();
@@ -62,7 +62,10 @@ document.getElementById('download-btn').addEventListener('click', async () => {
         const cleanAuthor = log.author.replace(/[^a-z0-9]/gi, '_');
         const cleanProject = log.project.replace(/[^a-z0-9]/gi, '_');
         
-        const folderName = `${dateStr}-${cleanAuthor}-${cleanProject}-${i}`;
+        // Use a padded index (000, 001, etc.) to ensure OS file explorers sort them chronologically
+        const padIndex = String(i).padStart(3, '0');
+        const folderName = `${padIndex}-${dateStr}-${cleanAuthor}-${cleanProject}`;
+        
         const folder = zip.folder(folderName);
         const assets = folder.folder('assets');
         
@@ -84,11 +87,11 @@ document.getElementById('download-btn').addEventListener('click', async () => {
         let assetIndex = 1;
         for (const imgUrl of log.images) {
           try {
-            const base64Data = await fetchAssetViaBackground(imgUrl);
+            const blob = await fetchBlob(imgUrl);
             const fileExt = imgUrl.split('.').pop().split('?')[0] || 'png';
             const filename = `image-${assetIndex}.${fileExt}`;
             
-            assets.file(filename, base64Data.split(',')[1], { base64: true });
+            assets.file(filename, blob);
 
             if (format === 'md') content += `\n\n![Attached Image ${assetIndex}](assets/${filename})`;
             else if (format === 'html') content += `<br><img src="assets/${filename}" style="max-width: 100%;">`;
@@ -100,11 +103,11 @@ document.getElementById('download-btn').addEventListener('click', async () => {
         let vidIndex = 1;
         for (const vidUrl of log.videos) {
           try {
-            const base64Data = await fetchAssetViaBackground(vidUrl);
+            const blob = await fetchBlob(vidUrl);
             const fileExt = vidUrl.split('.').pop().split('?')[0] || 'mp4';
             const filename = `video-${vidIndex}.${fileExt}`;
             
-            assets.file(filename, base64Data.split(',')[1], { base64: true });
+            assets.file(filename, blob);
 
             if (format === 'md') content += `\n\n[Attached Video ${vidIndex}](assets/${filename})`;
             else if (format === 'html') content += `<br><video src="assets/${filename}" controls style="max-width: 100%;"></video>`;
@@ -115,12 +118,12 @@ document.getElementById('download-btn').addEventListener('click', async () => {
         // Fetch Emotes
         for (const emote of log.emotes) {
           try {
-            const base64Data = await fetchAssetViaBackground(emote.src);
+            const blob = await fetchBlob(emote.src);
             const fileExt = emote.src.split('.').pop().split('?')[0] || 'png';
             const safeName = emote.alt.replace(/[^a-z0-9_-]/gi, '');
             const filename = `emote-${safeName}.${fileExt}`;
             
-            assets.file(filename, base64Data.split(',')[1], { base64: true });
+            assets.file(filename, blob);
 
             if (format === 'md') {
               content = content.replaceAll(emote.alt, `![${emote.alt}](assets/${filename})`);
@@ -136,8 +139,6 @@ document.getElementById('download-btn').addEventListener('click', async () => {
       const zipBlob = await zip.generateAsync({ type: 'blob' });
       const downloadUrl = URL.createObjectURL(zipBlob);
 
-      // Create a native link element to trigger the download directly from the popup
-      // This completely bypasses Firefox's restrictions on chrome.downloads.download
       const a = document.createElement('a');
       a.href = downloadUrl;
       a.download = 'stardance-devlogs.zip';
@@ -150,7 +151,7 @@ document.getElementById('download-btn').addEventListener('click', async () => {
         URL.revokeObjectURL(downloadUrl);
       }, 1000);
 
-      statusEl.textContent = 'Download started!';
+      statusEl.textContent = 'Download completed!';
     } catch (err) {
       statusEl.textContent = `Error: ${err.message}`;
     } finally {
