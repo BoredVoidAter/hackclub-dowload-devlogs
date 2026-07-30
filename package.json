@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Firefox extension to download devlogs from Hack Club Stardance as ZIP files",
   "private": true,
-  "scripts": {},
+  "scripts": {
+    "build": "esbuild src/background.js --bundle --outfile=extension/background.js && esbuild src/content.js --bundle --outfile=extension/content.js && esbuild src/popup.js --bundle --outfile=extension/popup.js"
+  },
   "dependencies": {
     "jszip": "^3.10.1"
   },

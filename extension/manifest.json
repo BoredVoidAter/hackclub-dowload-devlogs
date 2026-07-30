@@ -10,6 +10,11 @@
     "activeTab",
     "downloads"
   ],
+  "host_permissions": [
+    "*://*.hackclub.com/*",
+    "*://*.amazonaws.com/*",
+    "*://cachet.dunkirk.sh/*"
+  ],
   "background": {
     "service_worker": "background.js",
     "type": "module"
