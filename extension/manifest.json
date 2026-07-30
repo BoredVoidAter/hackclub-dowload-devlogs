@@ -5,11 +5,11 @@
   "description": "Download devlogs from Stardance as ZIP with Markdown and media.",
   "browser_specific_settings": {
     "gecko": {
-      "id": "devlog-downloader@hackclub.com"
+      "id": "devlog-downloader@hackclub.com",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
     }
-  },
-  "data_collection_permissions": {
-    "required": ["none"]
   },
   "action": {
     "default_popup": "popup.html"
