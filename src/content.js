@@ -1,5 +1,8 @@
 function extractDevlogs() {
-  const cards = document.querySelectorAll('article.feed-post-card');
+  // Only target actual Devlog posts and exclude clones hidden inside modal dialogs
+  const cards = Array.from(document.querySelectorAll('article.feed-post-card[data-feed-engagement-post-type-value="Post::Devlog"]'))
+    .filter(card => !card.closest('dialog'));
+
   const devlogs = [];
 
   cards.forEach((card, index) => {
