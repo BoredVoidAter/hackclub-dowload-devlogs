@@ -3,6 +3,11 @@
   "name": "Devlog Downloader",
   "version": "1.0.0",
   "description": "Download devlogs from Stardance as ZIP with Markdown and media.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "devlog-downloader@hackclub.com"
+    }
+  },
   "action": {
     "default_popup": "popup.html"
   },
