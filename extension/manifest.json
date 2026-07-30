@@ -5,5 +5,19 @@
   "description": "Download devlogs from Stardance as ZIP with Markdown and media.",
   "action": {
     "default_popup": "popup.html"
-  }
+  },
+  "permissions": [
+    "activeTab",
+    "downloads"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.hackclub.com/*"],
+      "js": ["content.js"]
+    }
+  ]
 }
