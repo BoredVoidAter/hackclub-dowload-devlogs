@@ -1,11 +1,19 @@
-# Hack Club Devlog Downloader (Firefox Extension)
+# Hack Club Devlog Downloader
 
 Firefox extension that downloads hackclub devlogs in a selected format. Tested with stardance.
+
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 ## Installation
 
 ### Mozilla Webstore
-[![Get the add-on](assets/get-the-addon.png)](https://addons.mozilla.org/en-US/firefox/addon/hackclub-devlog-downloader/)
+<a href="https://addons.mozilla.org/en-US/firefox/addon/hackclub-devlog-downloader/">
+  <img
+    src="./assets/get-the-addon.png"
+    alt="Get the add-on"
+    width="160"
+  />
+</a>
 
 ### Github Actions
 1. Go to the **Actions** tab in this repository on GitHub.
